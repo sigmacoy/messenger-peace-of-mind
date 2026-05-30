@@ -14,10 +14,10 @@
 
 ## IMPORTANT NOTE: Facebook Rate Limiting
 
-This script automatically stops or causes page refresh after deleting **30-50 chats** due to Facebook's anti-bot protection. 
+This script automatically stops or causes page refresh after deleting **30-50 chats** OR Mostly 5-6 minutes due to Facebook's anti-bot protection. 
 
-**But hey, at least you didn't pay anything. No money spent.**
-**Free = No complaints. Just re-run and keep deleting.**
+**But hey, at least you didn't pay anything. No money spent!**
+**Just re-run and keep deleting.**
 
 
 
@@ -44,3 +44,7 @@ Click the red square button next to **Delete Chats** or **Redact Chats** at any 
 - The extension relies on Facebook's DOM structure, which can change without notice. If it stops working, re-run the debug snippets in the console to find updated selectors.
 - Do not close or navigate away from Messenger while a deletion run is in progress.
 - Deleted chats cannot be recovered.
+
+
+## Buy me a Coffee!
+[![Buy me a coffee](qr_code.jpg)]

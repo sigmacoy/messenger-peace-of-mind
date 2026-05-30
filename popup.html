@@ -1,7 +1,140 @@
 <!DOCTYPE html>
 <html>
-<body style="width: 200px; padding: 10px;">
-  <button id="deleteBtn" style="width:100%; padding:10px;">Delete Chats</button>
+<head>
+  <meta charset="utf-8">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 220px;
+      padding: 12px;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1a1a1a;
+      color: #f0f0f0;
+    }
+
+    .row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 9px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #2a2a2a;
+      color: #f0f0f0;
+      transition: background 0.15s;
+    }
+
+    .action-btn:hover { background: #3a3a3a; }
+
+    .stop-btn {
+      width: 36px;
+      flex-shrink: 0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #c0392b;
+      transition: background 0.15s;
+    }
+
+    .stop-btn:hover { background: #e74c3c; }
+
+    .stop-btn .square {
+      display: block;
+      width: 12px;
+      height: 12px;
+      background: #fff;
+      border-radius: 2px;
+      margin: auto;
+    }
+
+    #coffeeBtn {
+      width: 100%;
+      padding: 9px 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #c67c2a;
+      color: #fff;
+      transition: background 0.15s;
+      margin-bottom: 8px;
+    }
+
+    #coffeeBtn:hover { background: #e0922f; }
+
+    #status {
+      font-size: 11px;
+      color: #888;
+      text-align: center;
+      min-height: 14px;
+    }
+
+    #qrView {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 196px;
+    }
+
+    #qrView img {
+      width: 196px;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+
+    #backBtn {
+      width: 196px;
+      padding: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background: #2a2a2a;
+      color: #aaa;
+      transition: background 0.15s;
+    }
+
+    #backBtn:hover { background: #3a3a3a; }
+  </style>
+</head>
+<body>
+
+  <div id="mainView">
+    <div class="row">
+      <button class="action-btn" id="deleteBtn">Delete All Chats</button>
+      <button class="stop-btn" id="stopDeleteBtn" title="Stop deleting">
+        <span class="square"></span>
+      </button>
+    </div>
+
+    <div class="row">
+      <button class="action-btn" id="redactBtn">Redact Chat</button>
+      <button class="stop-btn" id="stopRedactBtn" title="Stop redacting">
+        <span class="square"></span>
+      </button>
+    </div>
+
+    <button id="coffeeBtn">Buy me a Coffee</button>
+    <div id="status"></div>
+  </div>
+
+  <div id="qrView">
+    <img src="qr_code.jpg" alt="Buy me a coffee QR code">
+    <button id="backBtn">Back</button>
+  </div>
+
   <script src="popup.js"></script>
 </body>
 </html>
