@@ -5,33 +5,32 @@ const SCROLL_DELAY = 1500;
 const CLICK_DELAY = 500;
 const MENU_DELAY = 300;
 
+// Helper delay
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Check if a chat is Marketplace (no menu button available)
 function isMarketplaceChat(chatRow) {
-  // Check for Marketplace indicators
   const text = chatRow.innerText || '';
-  
+
   const marketplaceIndicators = [
-    'Marketplace',
-    'marketplace',
-    'Listing',
-    'Buying',
-    'Selling',
-    'Shipping',
-    'Item sold',
-    'Your listing'
+    'Marketplace', 'marketplace', 'Listing',
+    'Buying', 'Selling', 'Shipping', 'Item sold', 'Your listing'
   ];
-  
+
   for (let indicator of marketplaceIndicators) {
     if (text.includes(indicator)) {
       console.log('⏭️ Skipping Marketplace chat:', text.substring(0, 50));
       return true;
     }
   }
-  
-  // Check for specific Marketplace class/attribute patterns
-  const hasMarketplaceClass = chatRow.querySelector('[class*="marketplace"], [aria-label*="marketplace"]');
+
+  const hasMarketplaceClass = chatRow.querySelector(
+    '[class*="marketplace"], [aria-label*="marketplace"]'
+  );
   if (hasMarketplaceClass) return true;
-  
+
   return false;
 }
 
@@ -43,12 +42,10 @@ function hasMenuButton(chatRow) {
     'div[role="button"][aria-label]',
     'svg[aria-label*="more"]'
   ];
-  
+
   for (let sel of selectors) {
     const btn = chatRow.querySelector(sel);
-    if (btn && btn.offsetParent !== null) { // Check if visible
-      return true;
-    }
+    if (btn && btn.offsetParent !== null) return true;
   }
   return false;
 }
@@ -63,12 +60,10 @@ function findMenuButton(chatRow) {
     'div[aria-label*="Menu"]',
     'div[role="button"]:last-child'
   ];
-  
+
   for (let sel of selectors) {
     const btn = chatRow.querySelector(sel);
-    if (btn && btn.offsetParent !== null) {
-      return btn;
-    }
+    if (btn && btn.offsetParent !== null) return btn;
   }
   return null;
 }
@@ -81,7 +76,7 @@ function getValidChatRows() {
     '.x1n2onr6.xdj266r',
     'div[aria-label*="Chat list"] div[role="button"]'
   ];
-  
+
   let allRows = [];
   for (let sel of selectors) {
     const rows = document.querySelectorAll(sel);
@@ -90,10 +85,9 @@ function getValidChatRows() {
       break;
     }
   }
-  
-  // Filter out Marketplace chats and duplicates
+
   const uniqueRows = [...new Map(allRows.map(row => [row, row])).values()];
-  const validRows = uniqueRows.filter(row => {
+  return uniqueRows.filter(row => {
     if (isMarketplaceChat(row)) return false;
     if (!hasMenuButton(row)) {
       console.log('⏭️ Skipping chat without menu button');
@@ -101,165 +95,152 @@ function getValidChatRows() {
     }
     return true;
   });
-  
-  return validRows;
 }
 
 // Find the Delete chat option in the open menu
 function findDeleteOption() {
-  const menu = document.querySelector('div[role="menu"][aria-label="More options for this chat"]');
-  if (!menu) return null;
-  
-  const items = menu.querySelectorAll('div[role="menuitem"]');
+  // Try the labelled menu first
+  const menu = document.querySelector(
+    'div[role="menu"][aria-label="More options for this chat"]'
+  );
+
+  // Fallback: any visible menu
+  const target = menu || document.querySelector('div[role="menu"]');
+  if (!target) return null;
+
+  const items = target.querySelectorAll('div[role="menuitem"]');
   for (let item of items) {
     const span = item.querySelector('span[dir="auto"]');
-    if (span && span.innerText === 'Delete chat') {
-      return item;
-    }
+    if (span && span.innerText.trim() === 'Delete chat') return item;
   }
   return null;
 }
 
-// Confirm deletion dialog
-function confirmDelete() {
-  const buttons = document.querySelectorAll('button, div[role="button"]');
+function findConfirmButton() {
+  // Wait for the fully loaded dialog (not the "Loading..." state)
+  const dialog = document.querySelector('[role="dialog"][aria-label="Delete chat"]');
+  if (!dialog) return null;
+
+  // Button 3: aria-label="Delete chat" AND has visible text "Delete chat"
+  // (Button 1 also has aria-label="Delete chat" but no text — it's an icon/header)
+  const buttons = dialog.querySelectorAll('[role="button"][aria-label="Delete chat"]');
   for (let btn of buttons) {
-    const text = btn.innerText || '';
-    if (text === 'Delete' || text === 'Delete chat' || text.includes('Delete')) {
-      if (btn.offsetParent !== null) { // Visible button
-        return btn;
-      }
+    if (btn.innerText?.trim() === 'Delete chat' && btn.offsetParent !== null) {
+      console.log('✅ Found confirm button:', btn.outerHTML.substring(0, 150));
+      return btn;
     }
   }
   return null;
 }
 
-// Delete a single chat
-async function deleteChat(chatRow, index) {
-  console.log(`Processing chat ${index + 1}...`);
-  
-  // Extra check before proceeding
-  if (isMarketplaceChat(chatRow)) {
-    console.log('❌ Marketplace detected - skipping');
-    return { success: false, skipped: true, reason: 'marketplace' };
-  }
-  
-  // 1. Scroll to make sure it's visible
+// Simulate a real mouse click (bypasses React's synthetic event checks)
+function realClick(el) {
+  el.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
+  el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+  el.dispatchEvent(new MouseEvent('mouseup',   { bubbles: true }));
+  el.dispatchEvent(new MouseEvent('click',     { bubbles: true, cancelable: true, view: window }));
+}
+
+// Delete a single chat — returns { success: boolean }
+async function deleteChat(chatRow) {
+  console.log(`🗑️ Attempting: ${chatRow.innerText.substring(0, 30)}...`);
+
+  // 1. Scroll into view
   chatRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
   await delay(300);
-  
-  // 2. Hover to reveal menu button
+
+  // 2. Hover to reveal the "..." button
   chatRow.dispatchEvent(new MouseEvent('mouseenter', { bubbles: true }));
-  chatRow.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }));
   await delay(500);
-  
-  // 3. Find and click the "..." button
+
+  // 3. Click the "..." menu button
   const menuBtn = findMenuButton(chatRow);
   if (!menuBtn) {
-    console.log("⚠️ No menu button found - skipping");
-    return { success: false, skipped: true, reason: 'no_menu' };
+    console.log('⚠️ No menu button found, skipping');
+    return { success: false };
   }
-  
-  menuBtn.click();
-  await delay(MENU_DELAY);
-  
-  // 4. Find and click Delete chat
+  realClick(menuBtn);
+  await delay(MENU_DELAY + 200);
+
+  // 4. Click "Delete chat" in the dropdown
   const deleteOption = findDeleteOption();
   if (!deleteOption) {
-    console.log("⚠️ Delete option not found");
-    document.body.click(); // Close menu
-    return { success: false, skipped: false, reason: 'no_delete' };
+    console.log('⚠️ Delete option not found in menu');
+    document.body.click(); // close the menu
+    return { success: false };
   }
-  
-  deleteOption.click();
-  await delay(CLICK_DELAY);
-  
-  // 5. Confirm deletion
-  const confirmBtn = confirmDelete();
-  if (confirmBtn) {
-    confirmBtn.click();
-    await delay(CLICK_DELAY);
-    console.log(`✅ Deleted chat ${index + 1}`);
-    return { success: true, skipped: false };
+  realClick(deleteOption);
+  console.log('✓ Delete option clicked, waiting for confirm dialog…');
+
+  // 5. Wait for the FULLY LOADED confirm dialog (not just any dialog)
+  let confirmBtn = null;
+  for (let attempt = 0; attempt < 20; attempt++) {
+    await delay(300);
+    // Check dialog is fully loaded (aria-label changes from "Loading..." to "Delete chat")
+    const dialog = document.querySelector('[role="dialog"][aria-label="Delete chat"]');
+    if (dialog) {
+      confirmBtn = findConfirmButton();
+      if (confirmBtn) break;
+    }
+    console.log(`  …waiting for dialog to load (attempt ${attempt + 1})`);
   }
-  
-  return { success: false, skipped: false, reason: 'no_confirm' };
+
+  if (!confirmBtn) {
+    console.log('❌ Confirm button never appeared');
+    // Try pressing Escape to close any stuck overlay
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+    return { success: false };
+  }
+
+  // 6. Click the confirm "Delete chat" button
+  realClick(confirmBtn);
+  await delay(800);
+  console.log('✅ Chat deleted successfully');
+  return { success: true };
 }
 
-// Main deletion loop
+// Main loop
 async function deleteAllChats() {
-  console.log("🚀 Starting Messenger chat deletion...");
-  console.log("⚠️ Marketplace chats will be automatically skipped");
-  
+  console.log('🚀 Starting Messenger chat deletion…');
   let deletedCount = 0;
-  let skippedCount = 0;
-  let failedCount = 0;
-  let maxIterations = 50;
-  let iteration = 0;
-  
-  while (iteration < maxIterations) {
-    iteration++;
-    
-    // Get valid chat rows (Marketplace already filtered out)
-    const chats = getValidChatRows();
-    
-    if (chats.length === 0) {
-      console.log("📭 No more valid chats found");
+  const maxIterations = 100;
+
+  for (let i = 0; i < maxIterations; i++) {
+    const allChats = document.querySelectorAll('[role="row"]');
+
+    let chatToDelete = null;
+    for (let chat of allChats) {
+      if (!isMarketplaceChat(chat)) {
+        chatToDelete = chat;
+        break;
+      }
+    }
+
+    if (!chatToDelete) {
+      console.log('No more non-Marketplace chats found');
       break;
     }
-    
-    console.log(`\n📊 Round ${iteration}: Found ${chats.length} valid chats`);
-    
-    // Try to delete the first valid chat
-    const result = await deleteChat(chats[0], deletedCount);
-    
+
+    const result = await deleteChat(chatToDelete);
+
     if (result.success) {
       deletedCount++;
-      await delay(SCROLL_DELAY);
-    } else if (result.skipped) {
-      skippedCount++;
-      // Force remove this chat from DOM by scrolling past it
-      chats[0].style.display = 'none'; // Hide it so we don't get stuck
-      window.scrollBy(0, 100);
-      await delay(500);
+      console.log(`✅ Total deleted: ${deletedCount}`);
     } else {
-      failedCount++;
-      await delay(1000);
+      // Hide so we don't retry the same stuck chat forever
+      chatToDelete.style.display = 'none';
     }
-    
-    // Stop conditions
-    if (failedCount > 15) {
-      console.log("🛑 Too many failures, stopping");
-      break;
-    }
-    
-    // Refresh view to load more chats
-    if (iteration % 5 === 0) {
-      window.scrollTo(0, document.body.scrollHeight);
-      await delay(2000);
-    }
+
+    await delay(1500);
   }
-  
-  console.log(`\n🎉 COMPLETE!`);
-  console.log(`✅ Deleted: ${deletedCount}`);
-  console.log(`⏭️ Skipped (Marketplace/etc): ${skippedCount}`);
-  console.log(`❌ Failed: ${failedCount}`);
-  
-  alert(`✅ Deleted ${deletedCount} chats\n⏭️ Skipped ${skippedCount} (Marketplace)\n❌ Failed ${failedCount}`);
+
+  alert(`✅ Finished! Deleted ${deletedCount} chats.`);
 }
 
-// Helper delay
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-// Listen for popup message
+// Listen for popup trigger
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "start") {
+  if (request.action === 'start') {
     deleteAllChats().catch(console.error);
-    sendResponse({status: "started"});
+    sendResponse({ status: 'started' });
   }
 });
-
-// Optional: Auto-start (uncomment if you want)
-// setTimeout(() => deleteAllChats(), 2000);
