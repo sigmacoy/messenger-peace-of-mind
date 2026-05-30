@@ -1,9 +1,9 @@
 # Messenger Chat Deletor
 
 ### A Chrome extension that bulk-deletes or redacts Messenger chats. Marketplace conversations are automatically skipped.
-### Redacts - unsend all your chats in one chat.
+### Redacts - unsend all your messages in that chat.
 
----
+
 
 ## Features
 
@@ -20,7 +20,7 @@ This script automatically stops or causes page refresh after deleting **30-50 ch
 **Free = No complaints. Just re-run and keep deleting.**
 
 
----
+
 
 ## Installation
 1. Clone or download this repository and unzip it if needed.
@@ -28,16 +28,16 @@ This script automatically stops or causes page refresh after deleting **30-50 ch
 3. Enable **Developer mode** using the toggle in the top-right corner.
 4. Click **Load unpacked** and select the folder containing `manifest.json`.
 5. The extension icon will appear in your toolbar. Pin it if needed.
-6. Navigate to [facebook.com/messages](https://www.facebook.com/messages/t/) OR  and wait for the page to fully load.
-7. Click the extension icon to open the popup and press **Delete Chats** to begin.
+6. Navigate to [facebook.com/messages](https://www.facebook.com/messages/t/) and wait for the page to fully load.
+7. Click the extension icon to open the popup and press **Delete Chats** to begin. (Please do archive the conversations you don't want to get deleted.)
 
----
+
 
 ## Stopping
 
 Click the red square button next to **Delete Chats** or **Redact Chats** at any time to stop the current operation. The extension sends a `stop` or `stopRedact` message to the content script — make sure your `content.js` listens for those actions.
 
----
+
 
 ## Notes
 
