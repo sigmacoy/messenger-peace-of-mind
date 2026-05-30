@@ -3,48 +3,71 @@
 <head>
   <meta charset="utf-8">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
 
     body {
-      width: 220px;
-      padding: 12px;
+      width: 260px;              /* Slightly wider for better spacing */
+      padding: 10px 12px;       /* Balanced padding */
       font-family: 'Segoe UI', sans-serif;
       background: #1a1a1a;
       color: #f0f0f0;
+      /* Height is determined by content - Chrome enforces minimum ~100px */
     }
 
+    /* Clean, consistent spacing between elements */
     .row {
       display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
+      gap: 8px;                 /* Consistent gap */
+      margin-bottom: 8px;       /* Space between rows */
     }
 
+    /* All buttons have uniform styling */
     .action-btn {
       flex: 1;
-      padding: 9px 10px;
-      font-size: 13px;
+      padding: 8px 12px;        /* Comfortable but not oversized */
+      font-size: 12px;
       font-weight: 600;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       background: #2a2a2a;
       color: #f0f0f0;
-      transition: background 0.15s;
+      transition: all 0.15s ease;
+      white-space: nowrap;      /* Prevents text wrapping */
     }
 
-    .action-btn:hover { background: #3a3a3a; }
+    .action-btn:hover { 
+      background: #3a3a3a; 
+      transform: translateY(-1px);
+    }
 
+    .action-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Stop buttons - square style */
     .stop-btn {
       width: 36px;
+      height: 34px;             /* Match action-btn height */
       flex-shrink: 0;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       background: #c0392b;
-      transition: background 0.15s;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .stop-btn:hover { background: #e74c3c; }
+    .stop-btn:hover { 
+      background: #e74c3c;
+      transform: scale(0.98);
+    }
 
     .stop-btn .square {
       display: block;
@@ -52,61 +75,77 @@
       height: 12px;
       background: #fff;
       border-radius: 2px;
-      margin: auto;
     }
 
+    /* Coffee button - distinct styling */
     #coffeeBtn {
       width: 100%;
-      padding: 9px 10px;
-      font-size: 13px;
+      padding: 8px 12px;
+      font-size: 12px;
       font-weight: 600;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       background: #c67c2a;
       color: #fff;
-      transition: background 0.15s;
-      margin-bottom: 8px;
+      transition: all 0.15s ease;
+      margin: 4px 0 8px 0;      /* Top margin 4px, bottom 8px */
     }
 
-    #coffeeBtn:hover { background: #e0922f; }
+    #coffeeBtn:hover { 
+      background: #e0922f;
+      transform: translateY(-1px);
+    }
 
+    #coffeeBtn:active {
+      transform: translateY(1px);
+    }
+
+    /* Status message - clean and minimal */
     #status {
       font-size: 11px;
       color: #888;
       text-align: center;
-      min-height: 14px;
+      padding: 4px 0;
+      min-height: 27px;         /* Consistent height even when empty */
+      border-radius: 4px;
     }
 
+    /* QR View - hidden by default */
     #qrView {
       display: none;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      width: 196px;
+      gap: 12px;
+      width: 100%;
     }
 
     #qrView img {
-      width: 196px;
+      width: 200px;
       height: auto;
-      border-radius: 6px;
+      border-radius: 8px;
       display: block;
+      background: white;
+      padding: 4px;
     }
 
     #backBtn {
-      width: 196px;
-      padding: 8px;
+      width: 100%;
+      padding: 8px 12px;
       font-size: 12px;
       font-weight: 600;
       border: none;
-      border-radius: 5px;
+      border-radius: 6px;
       cursor: pointer;
       background: #2a2a2a;
       color: #aaa;
-      transition: background 0.15s;
+      transition: all 0.15s ease;
     }
 
-    #backBtn:hover { background: #3a3a3a; }
+    #backBtn:hover { 
+      background: #3a3a3a;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -127,7 +166,7 @@
     </div>
 
     <button id="coffeeBtn">Buy me a Coffee</button>
-    <div id="status"></div>
+    <div id="status">Ready</div>
   </div>
 
   <div id="qrView">
