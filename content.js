@@ -4,6 +4,7 @@ console.log("Messenger deleter loaded");
 const SCROLL_DELAY = 1500;
 const CLICK_DELAY = 500;
 const MENU_DELAY = 300;
+const NUM_CHATS_DELETE = 10000;
 
 // Helper delay
 function delay(ms) {
@@ -21,7 +22,7 @@ function isMarketplaceChat(chatRow) {
 
   for (let indicator of marketplaceIndicators) {
     if (text.includes(indicator)) {
-      console.log('⏭️ Skipping Marketplace chat:', text.substring(0, 50));
+      console.log('⏭Skipping Marketplace chat:', text.substring(0, 50));
       return true;
     }
   }
@@ -126,7 +127,7 @@ function findConfirmButton() {
   const buttons = dialog.querySelectorAll('[role="button"][aria-label="Delete chat"]');
   for (let btn of buttons) {
     if (btn.innerText?.trim() === 'Delete chat' && btn.offsetParent !== null) {
-      console.log('✅ Found confirm button:', btn.outerHTML.substring(0, 150));
+      console.log('Found confirm button:', btn.outerHTML.substring(0, 150));
       return btn;
     }
   }
@@ -186,7 +187,7 @@ async function deleteChat(chatRow) {
   }
 
   if (!confirmBtn) {
-    console.log('❌ Confirm button never appeared');
+    console.log('Confirm button never appeared');
     // Try pressing Escape to close any stuck overlay
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
     return { success: false };
@@ -195,17 +196,16 @@ async function deleteChat(chatRow) {
   // 6. Click the confirm "Delete chat" button
   realClick(confirmBtn);
   await delay(800);
-  console.log('✅ Chat deleted successfully');
+  console.log('Chat deleted successfully');
   return { success: true };
 }
 
 // Main loop
 async function deleteAllChats() {
-  console.log('🚀 Starting Messenger chat deletion…');
+  console.log('Starting Messenger chat deletion…');
   let deletedCount = 0;
-  const maxIterations = 100;
 
-  for (let i = 0; i < maxIterations; i++) {
+  for (let i = 0; i < NUM_CHATS_DELETE; i++) {
     const allChats = document.querySelectorAll('[role="row"]');
 
     let chatToDelete = null;
@@ -225,7 +225,7 @@ async function deleteAllChats() {
 
     if (result.success) {
       deletedCount++;
-      console.log(`✅ Total deleted: ${deletedCount}`);
+      console.log(`Total deleted: ${deletedCount}`);
     } else {
       // Hide so we don't retry the same stuck chat forever
       chatToDelete.style.display = 'none';
@@ -234,7 +234,7 @@ async function deleteAllChats() {
     await delay(1500);
   }
 
-  alert(`✅ Finished! Deleted ${deletedCount} chats.`);
+  alert(`Finished! Deleted ${deletedCount} chats.`);
 }
 
 // Listen for popup trigger
