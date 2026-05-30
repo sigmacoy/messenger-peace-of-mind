@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Messenger Peace of Mind",
+  "version": "1.0",
+  "permissions": ["activeTab", "scripting"],
+  "host_permissions": ["*://*.messenger.com/*", "*://*.facebook.com/*"],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.messenger.com/*", "*://*.facebook.com/messages/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
+
+
