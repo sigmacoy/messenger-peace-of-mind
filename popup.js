@@ -4,32 +4,41 @@ const qrView = document.getElementById("qrView");
 
 function sendAction(action) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-    chrome.tabs.sendMessage(tabs[0].id, { action });
+    if (tabs[0] && tabs[0].id) {
+      chrome.tabs.sendMessage(tabs[0].id, { action });
+    } else {
+      setStatus("❌ No active tab", 'error');
+    }
   });
 }
 
-function setStatus(msg) {
+function setStatus(msg, type = 'info') {
   status.textContent = msg;
+  status.className = '';
+  if (type === 'deleting') status.classList.add('status-deleting');
+  else if (type === 'success') status.classList.add('status-success');
+  else if (type === 'error') status.classList.add('status-error');
+  else if (type === 'stopped') status.classList.add('status-stopped');
 }
 
 document.getElementById("deleteBtn").addEventListener("click", () => {
   sendAction("start");
-  setStatus("Deleting chats...");
+  setStatus("🗑️ Deleting chats...", 'deleting');
 });
 
 document.getElementById("stopDeleteBtn").addEventListener("click", () => {
   sendAction("stop");
-  setStatus("Stopped.");
+  setStatus("⏹️ Chat deletion stopped", 'stopped');
 });
 
-document.getElementById("redactBtn").addEventListener("click", () => {
-  sendAction("redact");
-  setStatus("Redacting chats...");
+document.getElementById("deletePhotosBtn").addEventListener("click", () => {
+  sendAction("startDeletePhotos");
+  setStatus("📸 Deleting story photos...", 'deleting');
 });
 
-document.getElementById("stopRedactBtn").addEventListener("click", () => {
-  sendAction("stopRedact");
-  setStatus("Stopped.");
+document.getElementById("stopPhotosBtn").addEventListener("click", () => {
+  sendAction("stopDeletePhotos");
+  setStatus("⏹️ Photo deletion stopped", 'stopped');
 });
 
 document.getElementById("coffeeBtn").addEventListener("click", () => {
@@ -40,4 +49,20 @@ document.getElementById("coffeeBtn").addEventListener("click", () => {
 document.getElementById("backBtn").addEventListener("click", () => {
   qrView.style.display = "none";
   mainView.style.display = "block";
+});
+
+// Listen for status updates from content script
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.status) {
+    setStatus(request.status, 'deleting');
+  }
+  if (request.action === "deleteComplete") {
+    setStatus("✅ Chat deletion complete", 'success');
+  }
+  if (request.action === "photoDeleteComplete") {
+    setStatus(`✅ ${request.message}`, 'success');
+  }
+  if (request.action === "photoDeleteStopped") {
+    setStatus(`⏹️ ${request.message}`, 'stopped');
+  }
 });

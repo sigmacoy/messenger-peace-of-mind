@@ -11,6 +11,7 @@
 - Stop button halts the current operation at any time
 - Redact Chats button (stub — wire up your redact logic in content.js)
 - Skips chats that have no menu button or are identified as Marketplace listings
+- New: Delete all "photos", it stops when a "video" is found...
 
 ## IMPORTANT NOTE: Facebook Rate Limiting
 

@@ -1,0 +1,159 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 260px;
+  padding: 10px 12px;
+  font-family: 'Segoe UI', sans-serif;
+  background: #1a1a1a;
+  color: #f0f0f0;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.action-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #2a2a2a;
+  color: #f0f0f0;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.action-btn:hover {
+  background: #3a3a3a;
+  transform: translateY(-1px);
+}
+
+.action-btn:active {
+  transform: translateY(1px);
+}
+
+.photo-delete-btn {
+  background: linear-gradient(135deg, #2c5f2d, #1a3a1a);
+}
+
+.photo-delete-btn:hover {
+  background: linear-gradient(135deg, #3a7a3a, #2a4a2a);
+}
+
+.stop-btn {
+  width: 36px;
+  height: 34px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #c0392b;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stop-btn:hover {
+  background: #e74c3c;
+  transform: scale(0.98);
+}
+
+.stop-btn .square {
+  display: block;
+  width: 12px;
+  height: 12px;
+  background: #fff;
+  border-radius: 2px;
+}
+
+#coffeeBtn {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #c67c2a;
+  color: #fff;
+  transition: all 0.15s ease;
+  margin: 4px 0 8px 0;
+}
+
+#coffeeBtn:hover {
+  background: #e0922f;
+  transform: translateY(-1px);
+}
+
+#coffeeBtn:active {
+  transform: translateY(1px);
+}
+
+#status {
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  padding: 6px 8px;
+  min-height: 27px;
+  border-radius: 4px;
+  background: #252525;
+  word-wrap: break-word;
+}
+
+/* Status state classes — were missing from original popup.css */
+.status-deleting { color: #f39c12; background: rgba(243, 156, 18, 0.1); }
+.status-success  { color: #27ae60; background: rgba(39, 174, 96, 0.1); }
+.status-error    { color: #e74c3c; background: rgba(231, 76, 60, 0.1); }
+.status-stopped  { color: #95a5a6; background: rgba(149, 165, 166, 0.1); }
+
+/* Divider — was missing from original popup.css */
+.divider {
+  height: 1px;
+  background: #333;
+  margin: 4px 0 8px 0;
+}
+
+#qrView {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+#qrView img {
+  width: 200px;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  background: white;
+  padding: 4px;
+}
+
+#backBtn {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #2a2a2a;
+  color: #aaa;
+  transition: all 0.15s ease;
+}
+
+#backBtn:hover {
+  background: #3a3a3a;
+  color: #fff;
+}
