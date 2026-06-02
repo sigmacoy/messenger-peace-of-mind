@@ -117,11 +117,11 @@ body {
 .status-stopped  { color: #95a5a6; background: rgba(149, 165, 166, 0.1); }
 
 /* Divider — was missing from original popup.css */
-.divider {
+/* .divider {
   height: 1px;
   background: #333;
   margin: 4px 0 8px 0;
-}
+} */
 
 #qrView {
   display: none;

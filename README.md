@@ -1,8 +1,6 @@
 # Messenger Chat Deletor
 
-### A Chrome extension that bulk-deletes or redacts Messenger chats. Marketplace conversations are automatically skipped.
-### Redacts - unsend all your messages in that chat.
-
+### A Chrome extension that bulk-deletes chat messages AND delete archive stories. Marketplace conversations AND video stories are automatically skipped.
 
 
 ## Features
@@ -16,6 +14,10 @@
 ## IMPORTANT NOTE: Facebook Rate Limiting
 
 This script automatically stops or causes page refresh after deleting **30-50 chats** OR Mostly 5-6 minutes due to Facebook's anti-bot protection. 
+<br>
+Deleting 200+ photos too quickly triggered Facebook's anti-bot system, which now blocks the menu from popping up. The button remains visible, but clicking it does nothing until the cooldown period ends.
+<br>
+
 
 **But hey, at least you didn't pay anything. No money spent!**
 **Just re-run and keep deleting.**
